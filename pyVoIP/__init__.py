@@ -1,6 +1,24 @@
 import ssl
 
-__all__ = ["SIP", "RTP", "VoIP"]
+__all__ = [
+    "SIP",
+    "RTP",
+    "VoIP",
+    "debug",
+    "SIPCompatibleMethods",
+    "SIP_STATE_DB_LOCATION",
+    "set_tls_security",
+    "TLS_CHECK_HOSTNAME",
+    "TLS_VERIFY_MODE",
+    "SIPCompatibleVersions",
+    "RTPCompatibleVersions",
+    "RTPCompatibleCodecs",
+    "ALLOW_BASIC_AUTH",
+    "ALLOW_MD5_AUTH",
+    "ALLOW_TLS_FALLBACK",
+    "TRANSMIT_DELAY_REDUCTION",
+    "REGISTER_FAILURE_THRESHOLD"
+]
 
 version_info = (2, 0, "0a5")
 

@@ -106,6 +106,7 @@ class SIPMessage:
                     )
 
                 method = SIPMethod(start_line[0])
+
                 destination = get_uri_header(start_line[1])
 
             parsed_headers = parse_raw_headers(headers_raw)
