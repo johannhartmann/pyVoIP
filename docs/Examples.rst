@@ -44,43 +44,53 @@ Let's say you want to make a phone that when you call it, it plays an announceme
 
 .. code-block:: python
 
-  from pyVoIP.credentials import CredentialsManager
-  from pyVoIP.VoIP.call import VoIPCall
-  from pyVoIP.VoIP.error import InvalidStateError
-  from pyVoIP.VoIP.phone import VoIPPhone, VoIPPhoneParamter
-  import time
-  import wave
+import pyVoIP
+from pyVoIP.credentials import CredentialsManager
+from pyVoIP.VoIP.call import VoIPCall, CallState
+from pyVoIP.VoIP.error import InvalidStateError
+from pyVoIP.VoIP.phone import VoIPPhone, VoIPPhoneParameter
+import time
+import wave
+import socket
 
-  class Call(VoIPCall):
+def get_local_interface():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    return ip
 
-      def ringing(self, invite_request):
-          try:
-              f = wave.open('announcment.wav', 'rb')
-              frames = f.getnframes()
-              data = f.readframes(frames)
-              f.close()
-          
-              call.answer()
-              call.write_audio(data)  # This writes the audio data to the transmit buffer, this must be bytes.
-          
-              stop = time.time() + (frames / 8000)  # frames/8000 is the length of the audio in seconds. 8000 is the hertz of PCMU.
-          
-              while time.time() <= stop and call.state == CallState.ANSWERED:
-                  time.sleep(0.1)
-              call.hangup()
-          except InvalidStateError:
-              pass
-          except:
-              call.hangup()
+class Call(VoIPCall):
 
-  if __name__ == "__main__":
-      cm = CredentialsManager()
-      cm.add(<SIP server username>, <SIP server password>)
-      params = VoIPPhoneParamter(<SIP server IP>, <SIP server port>, <SIP server user>, cm, bind_ip=<Your computer's local IP>, call_class=Call)
-      phone = VoIPPhone(params)
-      phone.start()
-      input('Press enter to disable the phone')
-      phone.stop()
+    def ringing(self, invite_request):
+        print("Ringing")
+        try:
+            f = wave.open('./rick.wav', 'rb')
+            frames = f.getnframes()
+            data = f.readframes(frames)
+            f.close()
+            print("Playing Rick Astley")
+            self.answer()
+            self.write_audio(data)  # This writes the audio data to the transmit buffer, this must be bytes.
+
+            stop = time.time() + (frames / 8000)  # frames/8000 is the length of the audio in seconds. 8000 is the hertz of PCMU.
+
+            while time.time() <= stop and self.state == CallState.ANSWERED:
+                time.sleep(0.1)
+            print("Finished playing Rick Astley")
+            self.hangup()
+        except InvalidStateError:
+            pass
+        except:
+            self.hangup()
+
+if __name__ == "__main__":
+    cm = CredentialsManager()
+    cm.add(<SIP server username>, <SIP server password>)
+    params = VoIPPhoneParameter(<SIP server IP>, <SIP server port>, <SIP server user>, cm, bind_ip=get_local_interface(), call_class=Call)
+    phone = VoIPPhone(params)
+    phone.start()
+    input('Press enter to disable the phone')
+    phone.stop()
 
 Something important to note is our wait function. We are currently using:
 
